@@ -1,7 +1,6 @@
-package reserva;
+package reserva.model;
 
 import reserva.model.service.GerenciadorDeReservas;
-import sun.java2d.loops.GeneralRenderer;
 
 public class InicioReserva {
 

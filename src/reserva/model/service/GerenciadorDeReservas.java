@@ -1,11 +1,21 @@
 package reserva.model.service;
 
+import reserva.model.InicioReserva;
+import reserva.model.Rota;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class GerenciadorDeReservas {
 
-
+    private List<Rota> rotas = new ArrayList<Rota>();
     private Scanner scanner;
+
+    public GerenciadorDeReservas() {
+        scanner = new Scanner(System.in);
+    }
+
 
     public void menuPrincipal() {
         StringBuilder stringBuilderMenu = new StringBuilder();
@@ -58,7 +68,36 @@ public class GerenciadorDeReservas {
     }
 
     private void gerarReserva() {
+        int opcao;
+        InicioReserva inicioReserva = new InicioReserva();
 
+        StringBuilder stringBuilderMenuRota = new StringBuilder();
+        stringBuilderMenuRota.append
+                ("Bem Vindo A Viacao Santa Cruz. Vamos efetuar sua reserva! Escolha sua rota e horario: (digite um numero correspondente)\r\n");
+        int numeroItem = 1;
+        for (Rota rota : rotas) {
+            stringBuilderMenuRota.append(String.format("%s - %s -> %s | %sh | R$ %s \r\n", numeroItem, rota.getPartida(),
+                    rota.getDestino(), rota.getHora(), rota.getValor()));
+            numeroItem++;
+        }
+        System.out.println(stringBuilderMenuRota.toString());
+
+        Rota rotaSelecionada = null;
+        do{
+            opcao = scannerInput();
+            if (opcao <= 0 || opcao > rotas.size()){
+                System.out.println("opcao invalida tente novamente!");
+            } else {
+                rotaSelecionada = rotas.get(opcao -1);
+                System.out.println(exibeDados(rotaSelecionada));
+            }
+        } while (rotaSelecionada == null);
+
+
+    }
+
+    private String exibeDados(Rota rota) {
+        return "Origem: " + rota.getPartida() + " | Destino: " + rota.getDestino() + " | Hora: " + rota.getHora() + "h | Valor: R$" + rota.getValor();
     }
 
     private int scannerInput() {
