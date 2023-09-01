@@ -102,6 +102,21 @@ public class GerenciadorDeReservas {
         List<Assento> assentosDisponiveis = rotaSelecionada.getListaAssentos().stream().filter(Assento::isDisponivel).collect(Collectors.toList());
 
         List<Integer> numeroAssentosReservar = getListaNumeroAsssentosReserva(quantidadeReservas, assentosDisponiveis);
+
+        if (quantidadeReservas > 1) {
+            System.out.println("Sequencia de assentos disponiveis: " + numeroAssentosReservar);
+
+            for(Integer assento : numeroAssentosReservar){
+                Assento assentoReservar = rotaSelecionada.getListaAssentos().stream().filter(a -> a.getNumero() == assento.intValue()).findFirst().get();
+                assentoReservar.reservar();
+                System.out.println("Assento numero: " + assentoReservar.getNumero() + "| Ticket: " + assentoReservar.getIdTicket() + "| Reservado com sucesso! ");
+            }
+        } else if(quantidadeReservas == 1) {
+            System.out.println("Lista de assentos: ");
+            assentosDisponiveis.forEach(System.out::println);
+            System.out.println("Digite o numero do assento: (Digite apenas numeros!)");
+            final int numeroAssento = scannerInput();
+        }
     }
 
     private List<Integer> getListaNumeroAsssentosReserva(int quantidadeDesejadaReserva, List<Assento> assentos) {
