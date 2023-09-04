@@ -6,6 +6,7 @@ import reserva.model.Rota;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class GerenciadorDeReservas {
                 break;
 
             case 2:
-                cancelarReservaMenu();
+                cancelarReserva();
                 menuPrincipal();
                 break;
 
@@ -66,7 +67,8 @@ public class GerenciadorDeReservas {
     private void dadosEstatisticos() {
     }
 
-    private void cancelarReservaMenu() {
+    private void cancelarReserva(String ticket) {
+
     }
 
     private void gerarReserva() {
@@ -114,8 +116,23 @@ public class GerenciadorDeReservas {
         } else if(quantidadeReservas == 1) {
             System.out.println("Lista de assentos: ");
             assentosDisponiveis.forEach(System.out::println);
+
             System.out.println("Digite o numero do assento: (Digite apenas numeros!)");
             final int numeroAssento = scannerInput();
+
+            Optional<Assento> optionalAssentoReservar = rotaSelecionada.getListaAssentos().stream().filter(a -> a.getNumero() == numeroAssento).findFirst();
+
+            if (!optionalAssentoReservar.isPresent()){
+                System.out.println("Numero assento invalido ");
+            } else {
+                if (!optionalAssentoReservar.get().isDisponivel()){
+                    System.out.println("Assento indisponivel para reserva");
+                } else {
+                    optionalAssentoReservar.get().reservar();
+                    System.out.println("Assento numero: " + optionalAssentoReservar.get().getNumero() + "| Ticket "
+                            + optionalAssentoReservar.get().getIdTicket() + "| Reservado com sucesso");
+                }
+            }
         }
     }
 
@@ -142,7 +159,14 @@ public class GerenciadorDeReservas {
 
     private String exibeDados(Rota rota) {
         return "Origem: " + rota.getPartida() + " | Destino: " + rota.getDestino() + " | Hora: " + rota.getHora() + "h | Valor: R$" + rota.getValor();
+
+
     }
+
+    private String exibeDadosAssentoSelecionado (Assento assento){
+        return "Assento: " + assento.getNumero();
+    }
+
 
     private int scannerInput() {
         String input = scanner.nextLine();
