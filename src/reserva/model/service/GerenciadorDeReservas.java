@@ -1,6 +1,7 @@
 package reserva.model.service;
 
 import reserva.model.Assento;
+import reserva.model.Cidade;
 import reserva.model.InicioReserva;
 import reserva.model.Rota;
 
@@ -16,7 +17,24 @@ public class GerenciadorDeReservas {
     private Scanner scanner;
 
     public GerenciadorDeReservas() {
+        rotas.add(new Rota(Cidade.PORTO_ALEGRE.getDesc(), Cidade.FLORIANOPOLIS.getDesc(), 6, 19.45, criarAssentos()));
+        rotas.add(new Rota(Cidade.PORTO_ALEGRE.getDesc(), Cidade.FLORIANOPOLIS.getDesc(), 16, 23.50, criarAssentos()));
+        rotas.add(new Rota(Cidade.PORTO_ALEGRE.getDesc(), Cidade.CRICIUMA.getDesc(), 6, 12.90, criarAssentos()));
+        rotas.add(new Rota(Cidade.PORTO_ALEGRE.getDesc(), Cidade.CRICIUMA.getDesc(), 16, 15.90, criarAssentos()));
+        rotas.add(new Rota(Cidade.CRICIUMA.getDesc(), Cidade.FLORIANOPOLIS.getDesc(), 10, 7.30, criarAssentos()));
+        rotas.add(new Rota(Cidade.CRICIUMA.getDesc(), Cidade.FLORIANOPOLIS.getDesc(), 20, 10.30, criarAssentos()));
         scanner = new Scanner(System.in);
+
+    }
+
+    private List<Assento> criarAssentos() {
+        List<Assento> assentos = new ArrayList<Assento>();
+
+        for (int i = 1; i <= 46; i++){
+            boolean disponivel = i > 7;
+            assentos.add(new Assento(i, disponivel));
+        }
+        return assentos;
     }
 
 
@@ -42,7 +60,7 @@ public class GerenciadorDeReservas {
                 break;
 
             case 2:
-                cancelarReserva();
+                cancelarReservaMenu();
                 menuPrincipal();
                 break;
 
@@ -61,14 +79,62 @@ public class GerenciadorDeReservas {
         }
     }
 
+    private void cancelarReservaMenu() {
+        System.out.println("Informe ticket para cancelamento: ");
+        String numeroTicket = scanner.next();
+        System.out.println("Numero ticket: " + numeroTicket);
+
+        if (numeroTicket.isEmpty() || numeroTicket == null){
+            System.out.println("Ticket nao informado");
+        } else {
+            cancelarReserva(numeroTicket);
+        }
+    }
+
     private void sair() {
+        System.out.println("...Ate logo!...");
+        System.exit(1);
     }
 
     private void dadosEstatisticos() {
+
+        long totalAssentos = 0;
+        long totalAssentosReservadosGeral = 0;
+        long totalAssentosDisponiveisGeral = 0;
+
+        for (Rota rota : this.rotas){
+            long quantidadeAssentos = rota.getListaAssentos().stream().count();
+            long quantidadeReservada = rota.getListaAssentos().stream().filter(a -> a.isDisponivel() == false).count();
+            long quantidadeDisponivel = rota.getListaAssentos().stream().filter(a -> a.isDisponivel()).count();
+
+            totalAssentos += quantidadeAssentos;
+            totalAssentosReservadosGeral += quantidadeReservada;
+            totalAssentosDisponiveisGeral += quantidadeDisponivel;
+
+            System.out.println(rota.toString() + "| Quantidade reservado: " + quantidadeReservada + "| Quantidade disponivel: " + quantidadeDisponivel);
+        }
+        System.out.println("Total de assentos: " + totalAssentos);
+        System.out.println("Total de assentos reservados: " + totalAssentosReservadosGeral);
+        System.out.println("Total de assentos disponiveis: " + totalAssentosDisponiveisGeral);
+
     }
 
     private void cancelarReserva(String ticket) {
 
+        Assento assentoCancelar = null;
+        for (Rota rota : this.rotas) {
+            Optional<Assento> assento = rota.getListaAssentos().stream().filter(a -> a.getIdTicket() != null && a.getIdTicket().equals(ticket)).findFirst();
+            if (assento.isPresent()){
+                assentoCancelar = assento.get();
+                break;
+            }
+        }
+        if (assentoCancelar != null){
+            assentoCancelar.cancelarReserva();
+            System.out.println("Assento cancelado com sucesso!");
+        } else {
+            System.out.println("Ticket nao encontrado!");
+        }
     }
 
     private void gerarReserva() {

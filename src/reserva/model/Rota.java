@@ -8,8 +8,16 @@ public class Rota {
     private String partida;
     private String destino;
     private int hora;
-    private int valor;
+    private double valor;
     private List<Assento> listaAssentos = new ArrayList<Assento>();
+
+    public Rota(String partida, String destino, int hora, double valor, List<Assento> listaAssentos) {
+        this.partida = partida;
+        this.destino = destino;
+        this.hora = hora;
+        this.valor = valor;
+        this.listaAssentos = listaAssentos;
+    }
 
     public String getPartida() {
         return partida;
@@ -35,11 +43,11 @@ public class Rota {
         this.hora = hora;
     }
 
-    public int getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(int valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 
